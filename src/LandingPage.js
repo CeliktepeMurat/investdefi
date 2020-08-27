@@ -51,10 +51,7 @@ const LandingPage = () => {
     console.log(approve) */
 
     let allowance = await daiContract.methods
-      .allowance(
-        '0x877427CCBd3061Affd5c6518bc87799B9Cf3C408',
-        '0x33b4161732B863B8C79957D1D75660F4E33a60bE',
-      )
+      .allowance(account, '0x33b4161732B863B8C79957D1D75660F4E33a60bE')
       .call()
     console.log(allowance)
     let amount = [0, 10]
