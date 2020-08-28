@@ -35,37 +35,81 @@ const LandingPage = () => {
   const deposit = async () => {
     const account = ethereum.accounts[0]
     const web3 = ethereum.web3
-    const contract = new web3.eth.Contract(
+    const swapContract = new web3.eth.Contract(
       ethereum.contract,
       '0x33b4161732B863B8C79957D1D75660F4E33a60bE',
     )
-    const daiContract = new web3.eth.Contract(
+
+    /* const daiContract = new web3.eth.Contract(
       ERC20ABI.abi,
-      '0xc2118d4d90b274016cB7a54c03EF52E6c537D957',
+      '0xB5E5D0F8C0cbA267CD3D7035d6AdC8eBA7Df7Cdd',
     )
-    /*    let approve = await daiContract.methods
+    let approve = await daiContract.methods
       .approve('0x33b4161732B863B8C79957D1D75660F4E33a60bE', 1000000000000)
       .send({
-        from: '0x877427CCBd3061Affd5c6518bc87799B9Cf3C408',
+        from: account,
       })
-    console.log(approve) */
+    console.log(approve)
 
     let allowance = await daiContract.methods
-      .allowance(account, '0x33b4161732B863B8C79957D1D75660F4E33a60bE')
+      .allowance(account, '0xB5E5D0F8C0cbA267CD3D7035d6AdC8eBA7Df7Cdd')
       .call()
-    console.log(allowance)
-    let amount = [0, 10]
+    console.log(allowance) */
 
-    let res = await contract.methods.calc_token_amount(amount, true).call()
+    let amount = [1, 0]
+
+    let res = await swapContract.methods.calc_token_amount(amount, true).call()
+    console.log(res)
 
     let token_amount = cBN(Math.floor(res * 0.99).toString()).toFixed(0, 1)
     console.log(token_amount)
 
-    let response = await contract.methods.add_liquidity([10, 0], 0).send({
+    let response = await swapContract.methods.add_liquidity(amount, 0).send({
       from: account,
     })
+    console.log(response)
   }
-  const withdraw = () => {}
+
+  const withdraw = async () => {
+    const account = ethereum.accounts[0]
+    const web3 = ethereum.web3
+
+    const swapContract = new web3.eth.Contract(
+      ethereum.contract,
+      '0x33b4161732B863B8C79957D1D75660F4E33a60bE',
+    )
+    /* const daiContract = new web3.eth.Contract(
+      ERC20ABI.abi,
+      '0xB5E5D0F8C0cbA267CD3D7035d6AdC8eBA7Df7Cdd',
+    )
+
+    let approve = await daiContract.methods
+      .approve('0x33b4161732B863B8C79957D1D75660F4E33a60bE', 1000000000000)
+      .send({
+        from: account,
+      })
+    console.log(approve) */
+
+    /* let allowance = await daiContract.methods
+      .allowance(account, '0xB5E5D0F8C0cbA267CD3D7035d6AdC8eBA7Df7Cdd')
+      .call()
+    console.log(allowance) */
+    let amount = [1, 0]
+
+    let res = await swapContract.methods.calc_token_amount(amount, false).call()
+    console.log(res)
+
+    let token_amount = cBN(Math.floor(res * 1.01).toString()).toFixed(0, 1)
+    console.log(token_amount)
+
+    let response = await swapContract.methods
+      .remove_liquidity_imbalance(amount, token_amount)
+      .send({
+        from: account,
+        gas: 1000000,
+      })
+    console.log(response)
+  }
 
   const cBN = (val) => {
     return new BigNumber(val)
